@@ -1,0 +1,308 @@
+
+.pio/libdeps/esp12e/MQTT/Makefile,0
+
+.pio/libdeps/esp12e/MQTT/src/MQTT.h,27
+#define MQTT_HMQTT_H2,15
+
+.pio/libdeps/esp12e/MQTT/src/MQTTClient.h,5121
+#define MQTT_CLIENT_HMQTT_CLIENT_H2,22
+#define MQTT_HAS_FUNCTIONAL MQTT_HAS_FUNCTIONAL8,241
+#undef minmin12,349
+#undef maxmax15,384
+#define MQTT_HAS_FUNCTIONAL MQTT_HAS_FUNCTIONAL18,424
+#define MQTT_HAS_FUNCTIONAL MQTT_HAS_FUNCTIONAL20,460
+#define MQTT_HAS_FUNCTIONAL MQTT_HAS_FUNCTIONAL23,503
+typedef uint32_t (*MQTTClientClockSource)();MQTTClientClockSource34,646
+  uint32_t start;start37,709
+  uint32_t timeout;timeout38,727
+  MQTTClientClockSource millis;millis39,747
+} lwmqtt_arduino_timer_t;lwmqtt_arduino_timer_t40,779
+  Client *client;client43,823
+} lwmqtt_arduino_network_t;lwmqtt_arduino_network_t44,841
+typedef void (*MQTTClientCallbackSimple)(String &topic, String &payload);MQTTClientCallbackSimple48,889
+typedef void (*MQTTClientCallbackAdvanced)(MQTTClient *client, char topic[], char bytes[], int length);MQTTClientCallbackAdvanced49,963
+typedef std::function<void(String &topic, String &payload)> MQTTClientCallbackSimpleFunction;MQTTClientCallbackSimpleFunction51,1091
+    MQTTClientCallbackAdvancedFunction;MQTTClientCallbackAdvancedFunction53,1273
+  MQTTClient *client = nullptr;client57,1338
+  MQTTClientCallbackSimple simple = nullptr;simple58,1370
+  MQTTClientCallbackAdvanced advanced = nullptr;advanced59,1415
+  MQTTClientCallbackSimpleFunction functionSimple = nullptr;functionSimple61,1488
+  MQTTClientCallbackAdvancedFunction functionAdvanced = nullptr;functionAdvanced62,1549
+} MQTTClientCallback;MQTTClientCallback64,1621
+class MQTTClient {MQTTClient66,1644
+  size_t bufSize = 0;bufSize68,1673
+  uint8_t *readBuf = nullptr;readBuf69,1695
+  uint8_t *writeBuf = nullptr;writeBuf70,1725
+  uint16_t keepAlive = 10;keepAlive72,1757
+  bool cleanSession = true;cleanSession73,1784
+  uint32_t timeout = 1000;timeout74,1812
+  Client *netClient = nullptr;netClient76,1840
+  const char *hostname = nullptr;hostname77,1871
+  IPAddress address;address78,1905
+  int port = 0;port79,1926
+  lwmqtt_will_t *will = nullptr;will80,1942
+  MQTTClientCallback callback;callback81,1975
+  lwmqtt_arduino_network_t network = {nullptr};network83,2007
+  lwmqtt_arduino_timer_t timer1 = {0, 0, nullptr};timer184,2055
+  lwmqtt_arduino_timer_t timer2 = {0, 0, nullptr};timer285,2106
+  lwmqtt_client_t client = lwmqtt_client_t();client86,2157
+  bool _connected = false;_connected88,2204
+  lwmqtt_return_code_t _returnCode = (lwmqtt_return_code_t)0;_returnCode89,2231
+  lwmqtt_err_t _lastError = (lwmqtt_err_t)0;_lastError90,2293
+  void *ref = nullptr;ref93,2348
+  void begin(const char _hostname[], Client &_client) { this->begin(_hostname, 1883, _client); }begin100,2464
+  void begin(const char _hostname[], int _port, Client &_client) {begin101,2561
+  void begin(IPAddress _address, Client &_client) { this->begin(_address, 1883, _client); }begin105,2695
+  void begin(IPAddress _address, int _port, Client &_client) {begin106,2787
+  void setHost(const char _hostname[]) { this->setHost(_hostname, 1883); }setHost120,3223
+  void setHost(IPAddress _address) { this->setHost(_address, 1883); }setHost122,3347
+  void setWill(const char topic[]) { this->setWill(topic, ""); }setWill125,3464
+  void setWill(const char topic[], const char payload[]) { this->setWill(topic, payload, false, 0); }setWill126,3529
+  void setOptions(int _keepAlive, bool _cleanSession, int _timeout) {setOptions134,3846
+  bool connect(const char clientId[], bool skip = false) { return this->connect(clientId, nullptr, nullptr, skip); }connect140,4031
+  bool connect(const char clientId[], const char username[], bool skip = false) {connect141,4148
+  bool publish(const String &topic) { return this->publish(topic.c_str(), ""); }publish146,4400
+  bool publish(const char topic[]) { return this->publish(topic, ""); }publish147,4481
+  bool publish(const String &topic, const String &payload) { return this->publish(topic.c_str(), payload.c_str()); }publish148,4553
+  bool publish(const String &topic, const String &payload, bool retained, int qos) {publish149,4670
+  bool publish(const char topic[], const String &payload) { return this->publish(topic, payload.c_str()); }publish152,4832
+  bool publish(const char topic[], const String &payload, bool retained, int qos) {publish153,4940
+  bool publish(const char topic[], const char payload[]) {publish156,5093
+  bool publish(const char topic[], const char payload[], bool retained, int qos) {publish159,5228
+  bool publish(const char topic[], const char payload[], int length) {publish162,5402
+  bool subscribe(const String &topic) { return this->subscribe(topic.c_str()); }subscribe167,5632
+  bool subscribe(const String &topic, int qos) { return this->subscribe(topic.c_str(), qos); }subscribe168,5713
+  bool subscribe(const char topic[]) { return this->subscribe(topic, 0); }subscribe169,5808
+  bool unsubscribe(const String &topic) { return this->unsubscribe(topic.c_str()); }unsubscribe172,5931
+  lwmqtt_err_t lastError() { return this->_lastError; }lastError178,6093
+  lwmqtt_return_code_t returnCode() { return this->_returnCode; }returnCode179,6149
+
+.pio/libdeps/esp12e/MQTT/src/MQTTClient.cpp,2399
+inline void lwmqtt_arduino_timer_set(void *ref, uint32_t timeout) {lwmqtt_arduino_timer_set3,25
+inline int32_t lwmqtt_arduino_timer_get(void *ref) {lwmqtt_arduino_timer_get18,320
+inline lwmqtt_err_t lwmqtt_arduino_network_read(void *ref, uint8_t *buffer, size_t len, size_t *read,lwmqtt_arduino_network_read46,863
+inline lwmqtt_err_t lwmqtt_arduino_network_write(void *ref, uint8_t *buffer, size_t len, size_t *sent,lwmqtt_arduino_network_write88,1858
+static void MQTTClientHandler(lwmqtt_client_t * /*client*/, void *ref, lwmqtt_string_t topic,MQTTClientHandler102,2258
+MQTTClient::MQTTClient(int bufSize) {MQTTClient161,3828
+MQTTClient::~MQTTClient() {~MQTTClient168,4039
+void MQTTClient::begin(Client &_client) {begin182,4265
+void MQTTClient::onMessage(MQTTClientCallbackSimple cb) {onMessage199,4837
+void MQTTClient::onMessageAdvanced(MQTTClientCallbackAdvanced cb) {onMessageAdvanced210,5134
+void MQTTClient::onMessage(MQTTClientCallbackSimpleFunction cb) {onMessage222,5465
+void MQTTClient::onMessageAdvanced(MQTTClientCallbackAdvancedFunction cb) {onMessageAdvanced231,5739
+void MQTTClient::setClockSource(MQTTClientClockSource cb) {setClockSource241,6030
+void MQTTClient::setHost(IPAddress _address, int _port) {setHost246,6149
+void MQTTClient::setHost(const char _hostname[], int _port) {setHost252,6286
+void MQTTClient::setWill(const char topic[], const char payload[], bool retained, int qos) {setWill263,6538
+void MQTTClient::clearWill() {clearWill289,7210
+void MQTTClient::setKeepAlive(int _keepAlive) { this->keepAlive = _keepAlive; }setKeepAlive310,7574
+void MQTTClient::setCleanSession(bool _cleanSession) { this->cleanSession = _cleanSession; }setCleanSession312,7655
+void MQTTClient::setTimeout(int _timeout) { this->timeout = _timeout; }setTimeout314,7749
+bool MQTTClient::publish(const char topic[], const char payload[], int length, bool retained, int qos) {publish316,7822
+bool MQTTClient::connect(const char clientID[], const char username[], const char password[], bool skip) {connect341,8488
+bool MQTTClient::subscribe(const char topic[], int qos) {subscribe394,9853
+bool MQTTClient::unsubscribe(const char topic[]) {unsubscribe412,10270
+bool MQTTClient::loop() {loop430,10667
+bool MQTTClient::connected() {connected462,11371
+bool MQTTClient::disconnect() {disconnect468,11629
+void MQTTClient::close() {close483,11933
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/packet.c,1670
+lwmqtt_err_t lwmqtt_detect_packet_type(uint8_t *buf, size_t buf_len, lwmqtt_packet_type_t *packet_type) {lwmqtt_detect_packet_type3,21
+lwmqtt_err_t lwmqtt_detect_remaining_length(uint8_t *buf, size_t buf_len, uint32_t *rem_len) {lwmqtt_detect_remaining_length41,1046
+lwmqtt_err_t lwmqtt_encode_connect(uint8_t *buf, size_t buf_len, size_t *len, lwmqtt_options_t options,lwmqtt_encode_connect58,1503
+lwmqtt_err_t lwmqtt_decode_connack(uint8_t *buf, size_t buf_len, bool *session_present,lwmqtt_decode_connack204,5132
+lwmqtt_err_t lwmqtt_encode_zero(uint8_t *buf, size_t buf_len, size_t *len, lwmqtt_packet_type_t packet_type) {lwmqtt_encode_zero278,6898
+lwmqtt_err_t lwmqtt_decode_ack(uint8_t *buf, size_t buf_len, lwmqtt_packet_type_t packet_type, bool *dup,lwmqtt_decode_ack303,7501
+lwmqtt_err_t lwmqtt_encode_ack(uint8_t *buf, size_t buf_len, size_t *len, lwmqtt_packet_type_t packet_type, bool dup,lwmqtt_encode_ack345,8506
+lwmqtt_err_t lwmqtt_decode_publish(uint8_t *buf, size_t buf_len, bool *dup, uint16_t *packet_id, lwmqtt_string_t *topic,lwmqtt_decode_publish387,9541
+lwmqtt_err_t lwmqtt_encode_publish(uint8_t *buf, size_t buf_len, size_t *len, bool dup, uint16_t packet_id,lwmqtt_encode_publish475,11528
+lwmqtt_err_t lwmqtt_encode_subscribe(uint8_t *buf, size_t buf_len, size_t *len, uint16_t packet_id, int count,lwmqtt_encode_subscribe547,13264
+lwmqtt_err_t lwmqtt_decode_suback(uint8_t *buf, size_t buf_len, uint16_t *packet_id, int max_count, int *count,lwmqtt_decode_suback614,14922
+lwmqtt_err_t lwmqtt_encode_unsubscribe(uint8_t *buf, size_t buf_len, size_t *len, uint16_t packet_id, int count,lwmqtt_encode_unsubscribe684,16667
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/string.c,143
+lwmqtt_string_t lwmqtt_string(const char *str) {lwmqtt_string5,42
+int lwmqtt_strcmp(lwmqtt_string_t a, const char *b) {lwmqtt_strcmp22,367
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/client.c,2792
+void lwmqtt_init(lwmqtt_client_t *client, uint8_t *write_buf, size_t write_buf_size, uint8_t *read_buf,lwmqtt_init3,21
+void lwmqtt_set_network(lwmqtt_client_t *client, void *ref, lwmqtt_network_read_t read, lwmqtt_network_write_t write) {lwmqtt_set_network30,757
+void lwmqtt_set_timers(lwmqtt_client_t *client, void *keep_alive_timer, void *command_timer, lwmqtt_timer_set_t set,lwmqtt_set_timers36,969
+void lwmqtt_set_callback(lwmqtt_client_t *client, void *ref, lwmqtt_callback_t cb) {lwmqtt_set_callback47,1378
+void lwmqtt_drop_overflow(lwmqtt_client_t *client, bool enabled, uint32_t *counter) {lwmqtt_drop_overflow52,1521
+static uint16_t lwmqtt_get_next_packet_id(lwmqtt_client_t *client) {lwmqtt_get_next_packet_id57,1683
+static lwmqtt_err_t lwmqtt_read_from_network(lwmqtt_client_t *client, size_t offset, size_t len) {lwmqtt_read_from_network70,1954
+static lwmqtt_err_t lwmqtt_drain_network(lwmqtt_client_t *client, size_t amount) {lwmqtt_drain_network102,2818
+static lwmqtt_err_t lwmqtt_write_to_network(lwmqtt_client_t *client, size_t offset, size_t len) {lwmqtt_write_to_network132,3592
+static lwmqtt_err_t lwmqtt_read_packet_in_buffer(lwmqtt_client_t *client, size_t *read,lwmqtt_read_packet_in_buffer159,4356
+static lwmqtt_err_t lwmqtt_send_packet_in_buffer(lwmqtt_client_t *client, size_t length) {lwmqtt_send_packet_in_buffer236,6208
+static lwmqtt_err_t lwmqtt_cycle(lwmqtt_client_t *client, size_t *read, lwmqtt_packet_type_t *packet_type) {lwmqtt_cycle249,6571
+static lwmqtt_err_t lwmqtt_cycle_until(lwmqtt_client_t *client, lwmqtt_packet_type_t *packet_type, size_t available,lwmqtt_cycle_until372,9832
+lwmqtt_err_t lwmqtt_yield(lwmqtt_client_t *client, size_t available, uint32_t timeout) {lwmqtt_yield399,10680
+lwmqtt_err_t lwmqtt_connect(lwmqtt_client_t *client, lwmqtt_options_t options, lwmqtt_will_t *will,lwmqtt_connect413,11115
+lwmqtt_err_t lwmqtt_subscribe(lwmqtt_client_t *client, int count, lwmqtt_string_t *topic_filter, lwmqtt_qos_t *qos,lwmqtt_subscribe467,12722
+lwmqtt_err_t lwmqtt_subscribe_one(lwmqtt_client_t *client, lwmqtt_string_t topic_filter, lwmqtt_qos_t qos,lwmqtt_subscribe_one514,14151
+lwmqtt_err_t lwmqtt_unsubscribe(lwmqtt_client_t *client, int count, lwmqtt_string_t *topic_filter, uint32_t timeout) {lwmqtt_unsubscribe519,14383
+lwmqtt_err_t lwmqtt_unsubscribe_one(lwmqtt_client_t *client, lwmqtt_string_t topic_filter, uint32_t timeout) {lwmqtt_unsubscribe_one557,15571
+lwmqtt_err_t lwmqtt_publish(lwmqtt_client_t *client, lwmqtt_string_t topic, lwmqtt_message_t message,lwmqtt_publish561,15749
+lwmqtt_err_t lwmqtt_disconnect(lwmqtt_client_t *client, uint32_t timeout) {lwmqtt_disconnect618,17334
+lwmqtt_err_t lwmqtt_keep_alive(lwmqtt_client_t *client, uint32_t timeout) {lwmqtt_keep_alive638,17860
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/packet.h,918
+#define LWMQTT_PACKET_HLWMQTT_PACKET_H2,24
+  LWMQTT_NO_PACKET = 0,LWMQTT_NO_PACKET10,125
+  LWMQTT_CONNECT_PACKET = 1,LWMQTT_CONNECT_PACKET11,149
+  LWMQTT_CONNACK_PACKET,LWMQTT_CONNACK_PACKET12,178
+  LWMQTT_PUBLISH_PACKET,LWMQTT_PUBLISH_PACKET13,203
+  LWMQTT_PUBACK_PACKET,LWMQTT_PUBACK_PACKET14,228
+  LWMQTT_PUBREC_PACKET,LWMQTT_PUBREC_PACKET15,252
+  LWMQTT_PUBREL_PACKET,LWMQTT_PUBREL_PACKET16,276
+  LWMQTT_PUBCOMP_PACKET,LWMQTT_PUBCOMP_PACKET17,300
+  LWMQTT_SUBSCRIBE_PACKET,LWMQTT_SUBSCRIBE_PACKET18,325
+  LWMQTT_SUBACK_PACKET,LWMQTT_SUBACK_PACKET19,352
+  LWMQTT_UNSUBSCRIBE_PACKET,LWMQTT_UNSUBSCRIBE_PACKET20,376
+  LWMQTT_UNSUBACK_PACKET,LWMQTT_UNSUBACK_PACKET21,405
+  LWMQTT_PINGREQ_PACKET,LWMQTT_PINGREQ_PACKET22,431
+  LWMQTT_PINGRESP_PACKET,LWMQTT_PINGRESP_PACKET23,456
+  LWMQTT_DISCONNECT_PACKETLWMQTT_DISCONNECT_PACKET24,482
+} lwmqtt_packet_type_t;lwmqtt_packet_type_t25,509
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/lwmqtt.h,4865
+#define LWMQTT_HLWMQTT_H2,17
+  LWMQTT_SUCCESS = 0,LWMQTT_SUCCESS16,413
+  LWMQTT_BUFFER_TOO_SHORT = -1,LWMQTT_BUFFER_TOO_SHORT17,435
+  LWMQTT_VARNUM_OVERFLOW = -2,LWMQTT_VARNUM_OVERFLOW18,467
+  LWMQTT_NETWORK_FAILED_CONNECT = -3,LWMQTT_NETWORK_FAILED_CONNECT19,498
+  LWMQTT_NETWORK_TIMEOUT = -4,LWMQTT_NETWORK_TIMEOUT20,536
+  LWMQTT_NETWORK_FAILED_READ = -5,LWMQTT_NETWORK_FAILED_READ21,567
+  LWMQTT_NETWORK_FAILED_WRITE = -6,LWMQTT_NETWORK_FAILED_WRITE22,602
+  LWMQTT_REMAINING_LENGTH_OVERFLOW = -7,LWMQTT_REMAINING_LENGTH_OVERFLOW23,638
+  LWMQTT_REMAINING_LENGTH_MISMATCH = -8,LWMQTT_REMAINING_LENGTH_MISMATCH24,679
+  LWMQTT_MISSING_OR_WRONG_PACKET = -9,LWMQTT_MISSING_OR_WRONG_PACKET25,720
+  LWMQTT_CONNECTION_DENIED = -10,LWMQTT_CONNECTION_DENIED26,759
+  LWMQTT_FAILED_SUBSCRIPTION = -11,LWMQTT_FAILED_SUBSCRIPTION27,793
+  LWMQTT_SUBACK_ARRAY_OVERFLOW = -12,LWMQTT_SUBACK_ARRAY_OVERFLOW28,829
+  LWMQTT_PONG_TIMEOUT = -13,LWMQTT_PONG_TIMEOUT29,867
+} lwmqtt_err_t;lwmqtt_err_t30,896
+  uint16_t len;len36,965
+  char *data;data37,981
+} lwmqtt_string_t;lwmqtt_string_t38,995
+#define lwmqtt_default_string lwmqtt_default_string43,1062
+typedef enum { LWMQTT_QOS0 = 0, LWMQTT_QOS1 = 1, LWMQTT_QOS2 = 2, LWMQTT_QOS_FAILURE = 128 } lwmqtt_qos_t;LWMQTT_QOS066,1544
+typedef enum { LWMQTT_QOS0 = 0, LWMQTT_QOS1 = 1, LWMQTT_QOS2 = 2, LWMQTT_QOS_FAILURE = 128 } lwmqtt_qos_t;LWMQTT_QOS166,1544
+typedef enum { LWMQTT_QOS0 = 0, LWMQTT_QOS1 = 1, LWMQTT_QOS2 = 2, LWMQTT_QOS_FAILURE = 128 } lwmqtt_qos_t;LWMQTT_QOS266,1544
+typedef enum { LWMQTT_QOS0 = 0, LWMQTT_QOS1 = 1, LWMQTT_QOS2 = 2, LWMQTT_QOS_FAILURE = 128 } lwmqtt_qos_t;LWMQTT_QOS_FAILURE66,1544
+typedef enum { LWMQTT_QOS0 = 0, LWMQTT_QOS1 = 1, LWMQTT_QOS2 = 2, LWMQTT_QOS_FAILURE = 128 } lwmqtt_qos_t;lwmqtt_qos_t66,1544
+  lwmqtt_qos_t qos;qos72,1737
+  bool retained;retained73,1757
+  uint8_t *payload;payload74,1774
+  size_t payload_len;payload_len75,1794
+} lwmqtt_message_t;lwmqtt_message_t76,1816
+#define lwmqtt_default_message lwmqtt_default_message81,1885
+typedef struct lwmqtt_client_t lwmqtt_client_t;lwmqtt_client_t87,2006
+typedef lwmqtt_err_t (*lwmqtt_network_read_t)(void *ref, uint8_t *buf, size_t len, size_t *read, uint32_t timeout);lwmqtt_network_read_t101,2530
+typedef lwmqtt_err_t (*lwmqtt_network_write_t)(void *ref, uint8_t *buf, size_t len, size_t *sent, uint32_t timeout);lwmqtt_network_write_t115,3139
+typedef void (*lwmqtt_timer_set_t)(void *ref, uint32_t timeout);lwmqtt_timer_set_t123,3408
+typedef int32_t (*lwmqtt_timer_get_t)(void *ref);lwmqtt_timer_get_t131,3681
+typedef void (*lwmqtt_callback_t)(lwmqtt_client_t *client, void *ref, lwmqtt_string_t str, lwmqtt_message_t msg);lwmqtt_callback_t142,4361
+struct lwmqtt_client_t {lwmqtt_client_t147,4506
+  uint16_t last_packet_id;last_packet_id148,4531
+  uint32_t keep_alive_interval;keep_alive_interval149,4558
+  bool pong_pending;pong_pending150,4590
+  size_t write_buf_size, read_buf_size;write_buf_size152,4612
+  size_t write_buf_size, read_buf_size;read_buf_size152,4612
+  uint8_t *write_buf, *read_buf;write_buf153,4652
+  uint8_t *write_buf, *read_buf;read_buf153,4652
+  lwmqtt_callback_t callback;callback155,4686
+  void *callback_ref;callback_ref156,4716
+  void *network;network158,4739
+  lwmqtt_network_read_t network_read;network_read159,4756
+  lwmqtt_network_write_t network_write;network_write160,4794
+  void *keep_alive_timer;keep_alive_timer162,4835
+  void *command_timer;command_timer163,4861
+  lwmqtt_timer_set_t timer_set;timer_set164,4884
+  lwmqtt_timer_get_t timer_get;timer_get165,4916
+  bool drop_overflow;drop_overflow167,4949
+  uint32_t *overflow_counter;overflow_counter168,4971
+  lwmqtt_string_t topic;topic228,7033
+  lwmqtt_qos_t qos;qos229,7058
+  bool retained;retained230,7078
+  lwmqtt_string_t payload;payload231,7095
+} lwmqtt_will_t;lwmqtt_will_t232,7122
+#define lwmqtt_default_will lwmqtt_default_will237,7196
+  lwmqtt_string_t client_id;client_id244,7385
+  uint16_t keep_alive;keep_alive245,7414
+  bool clean_session;clean_session246,7437
+  lwmqtt_string_t username;username247,7459
+  lwmqtt_string_t password;password248,7487
+} lwmqtt_options_t;lwmqtt_options_t249,7515
+#define lwmqtt_default_options lwmqtt_default_options254,7595
+  LWMQTT_CONNECTION_ACCEPTED = 0,LWMQTT_CONNECTION_ACCEPTED261,7801
+  LWMQTT_UNACCEPTABLE_PROTOCOL = 1,LWMQTT_UNACCEPTABLE_PROTOCOL262,7835
+  LWMQTT_IDENTIFIER_REJECTED = 2,LWMQTT_IDENTIFIER_REJECTED263,7871
+  LWMQTT_SERVER_UNAVAILABLE = 3,LWMQTT_SERVER_UNAVAILABLE264,7905
+  LWMQTT_BAD_USERNAME_OR_PASSWORD = 4,LWMQTT_BAD_USERNAME_OR_PASSWORD265,7938
+  LWMQTT_NOT_AUTHORIZED = 5,LWMQTT_NOT_AUTHORIZED266,7977
+  LWMQTT_UNKNOWN_RETURN_CODE = 6LWMQTT_UNKNOWN_RETURN_CODE267,8006
+} lwmqtt_return_code_t;lwmqtt_return_code_t268,8039
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/helpers.c,1447
+uint8_t lwmqtt_read_bits(uint8_t byte, int pos, int num) {lwmqtt_read_bits5,43
+void lwmqtt_write_bits(uint8_t *byte, uint8_t value, int pos, int num) {lwmqtt_write_bits9,193
+lwmqtt_err_t lwmqtt_read_data(uint8_t **buf, const uint8_t *buf_end, uint8_t **data, size_t len) {lwmqtt_read_data13,371
+lwmqtt_err_t lwmqtt_write_data(uint8_t **buf, const uint8_t *buf_end, uint8_t *data, size_t len) {lwmqtt_write_data34,764
+lwmqtt_err_t lwmqtt_read_num(uint8_t **buf, const uint8_t *buf_end, uint16_t *num) {lwmqtt_read_num54,1151
+lwmqtt_err_t lwmqtt_write_num(uint8_t **buf, const uint8_t *buf_end, uint16_t num) {lwmqtt_write_num70,1492
+lwmqtt_err_t lwmqtt_read_string(uint8_t **buf, const uint8_t *buf_end, lwmqtt_string_t *str) {lwmqtt_read_string86,1833
+lwmqtt_err_t lwmqtt_write_string(uint8_t **buf, const uint8_t *buf_end, lwmqtt_string_t str) {lwmqtt_write_string106,2270
+lwmqtt_err_t lwmqtt_read_byte(uint8_t **buf, const uint8_t *buf_end, uint8_t *byte) {lwmqtt_read_byte122,2671
+lwmqtt_err_t lwmqtt_write_byte(uint8_t **buf, const uint8_t *buf_end, uint8_t byte) {lwmqtt_write_byte138,2975
+lwmqtt_err_t lwmqtt_varnum_length(uint32_t varnum, int *len) {lwmqtt_varnum_length153,3264
+lwmqtt_err_t lwmqtt_read_varnum(uint8_t **buf, const uint8_t *buf_end, uint32_t *varnum) {lwmqtt_read_varnum172,3679
+lwmqtt_err_t lwmqtt_write_varnum(uint8_t **buf, const uint8_t *buf_end, uint32_t varnum) {lwmqtt_write_varnum216,4517
+
+.pio/libdeps/esp12e/MQTT/src/lwmqtt/helpers.h,47
+#define LWMQTT_HELPERS_HLWMQTT_HELPERS_H2,25
+
+include/config.h,1108
+#define __CONFIG_H____CONFIG_H__2,21
+#define LED_R LED_R5,68
+#define LED_G LED_G6,91
+#define LAMP_R LAMP_R7,114
+#define LAMP_G LAMP_G8,137
+#define LAMP_B LAMP_B9,160
+#define LAMP_Y LAMP_Y10,183
+#define POWER_0 POWER_011,206
+#define POWER_1 POWER_112,230
+#define TOUCH_PAD TOUCH_PAD13,254
+#define GPIO_ON GPIO_ON15,279
+#define GPIO_OFF GPIO_OFF16,305
+#define STATE_ON STATE_ON19,356
+#define STATE_OFF STATE_OFF20,390
+#define AVAILABLE AVAILABLE21,425
+#define NOT_AVAILABLE NOT_AVAILABLE22,463
+#define MSG_ON MSG_ON24,503
+#define MSG_OFF MSG_OFF25,547
+#define DEFAULT_STATE DEFAULT_STATE27,592
+#define DEV_NAME DEV_NAME29,632
+#define STATE_TOPIC STATE_TOPIC30,675
+#define COMMAND_TOPIC COMMAND_TOPIC31,734
+#define AVAILABLE_TOPIC AVAILABLE_TOPIC32,795
+#define MONITOR_TOPIC MONITOR_TOPIC33,858
+#define WIFI_SSID WIFI_SSID37,976
+#define WIFI_PASS WIFI_PASS39,1044
+#define MQTT_HOST MQTT_HOST41,1154
+#define MQTT_PORT MQTT_PORT43,1256
+#define MQTT_CLIENT_ID MQTT_CLIENT_ID45,1369
+#define MQTT_USER MQTT_USER48,1568
+#define MQTT_PASS MQTT_PASS50,1655
+
+src/main.cpp,268
+WiFiClient net;net5,64
+MQTTClient client;client6,80
+unsigned long lastMillis = 0;lastMillis8,100
+void connect() {connect10,131
+void messageReceived(String &topic, String &payload) {messageReceived29,513
+void setup() {setup38,938
+void loop() {loop70,1716
